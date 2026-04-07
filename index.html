@@ -97,10 +97,29 @@
 <script>
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwZEMrRBAidwyWIRTA6aQ8zaDDujGUGyNyEcJg-3YnpkzRmf2aNBe1Ja3swTyEokaOz/exec"; // HIER URL EINTRAGEN!
 
-    window.onload = () => { document.getElementById('datum').valueAsDate = new Date(); };
+    // Service Worker registrieren
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+
+    window.onload = () => { 
+        document.getElementById('datum').valueAsDate = new Date(); 
+        // PIN prüfen oder abfragen
+        if (!localStorage.getItem('leben_pin')) {
+            const pin = prompt("Bitte PIN eingeben:");
+            if (pin) localStorage.setItem('leben_pin', pin);
+        }
+    };
 
     async function senden() {
         const status = document.getElementById('status');
+        const userPin = localStorage.getItem('leben_pin');
+        
+        if (!userPin) {
+            alert("Keine PIN gespeichert!");
+            return;
+        }
+
         status.innerText = "Speichere...";
         
         const ids = ["Sport", "Dehnen", "Bewegung", "Erkältung", "Schlaf", "B12", "Bakterien", "Wasser", "Essen", "Streit", "Periode", "Mastubartion", "Sex", "Sprache lernen", "Aktivismus", "soziale Kontakte", "tägliche Laune", "Studium"];
@@ -108,25 +127,28 @@
 
         ids.forEach(id => {
             const el = document.getElementById(id);
+            if (!el) return;
             if (el.type === "checkbox") values[id] = el.checked ? 1 : 0;
             else values[id] = el.value;
         });
 
         const data = {
-            pin: localStorage.getItem('finanz_pin'), // Nutzt die PIN aus der anderen App [cite: 142]
+            pin: userPin,
             datum: document.getElementById('datum').value,
             values: values
         };
 
         try {
+            // WICHTIG: mode: 'no-cors' bleibt wie bei der Finanz-App
             await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-            status.innerText = "Erfolgreich gespeichert!";
-            setTimeout(() => { status.innerText = ""; }, 2000);
+            status.innerText = "✅ Erfolgreich gespeichert!";
+            setTimeout(() => { status.innerText = ""; }, 3000);
         } catch(e) {
-            alert("Fehler!");
+            alert("Fehler bei der Verbindung!");
             status.innerText = "";
         }
     }
+</script>
 </script>
 </body>
 </html>
