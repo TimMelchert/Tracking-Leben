@@ -2,34 +2,65 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tracking Leben</title>
-
+    
     <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#34495e">
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root { --primary: #34495e; --success: #27ae60; --bg: #f4f7f6; }
-        body { font-family: sans-serif; background: var(--bg); padding: 15px; margin: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); padding: 15px; margin: 0; }
+        
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
-        h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; font-size: 1.2em; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5em; }
+        h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; font-size: 1.1em; text-transform: uppercase; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .item { display: flex; flex-direction: column; background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
-        label { font-size: 0.75em; font-weight: bold; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
-        input[type="text"], input[type="date"], select { padding: 8px; border-radius: 5px; border: 1px solid #ddd; }
-        input[type="checkbox"] { width: 25px; height: 25px; accent-color: var(--success); }
         .full-width { grid-column: span 2; }
-        button { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        
+        label { font-size: 0.7em; font-weight: bold; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], input[type="date"], select { 
+            padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 16px; background: white;
+        }
+        input[type="checkbox"] { width: 30px; height: 30px; accent-color: var(--success); margin: 5px auto; }
+        
+        button { 
+            width: 100%; padding: 16px; background: var(--success); color: white; border: none; 
+            border-radius: 12px; font-weight: bold; font-size: 1.1em; margin-top: 30px; cursor: pointer; 
+            box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);
+        }
+        
+        #status { text-align: center; color: #7f8c8d; margin-top: 10px; font-weight: bold; }
+
+        /* Overlay Style */
+        #overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); color: white; z-index: 1000; 
+            flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .checkmark { font-size: 80px; color: var(--success); }
     </style>
 </head>
 <body>
 
+<div id="overlay">
+    <div class="checkmark">check_circle</div>
+    <div style="font-size: 24px; margin-top:10px;">Gespeichert!</div>
+</div>
+
 <div class="card">
     <h1>Tracking Leben</h1>
-    <input type="date" id="datum" class="full-width" style="margin-bottom: 20px;">
+    
+    <div class="item full-width">
+        <label>Datum</label>
+        <input type="date" id="datum">
+    </div>
 
     <h2>Gesundheit</h2>
     <div class="grid">
@@ -37,28 +68,28 @@
         <div class="item"><label>Dehnen</label><input type="checkbox" id="Dehnen"></div>
         <div class="item"><label>Bewegung</label><input type="checkbox" id="Bewegung"></div>
         <div class="item"><label>Erkältung</label><input type="checkbox" id="Erkältung"></div>
-        <div class="item full-width"><label>Schlaf</label><input type="text" id="Schlaf" value="8h"></div>
+        <div class="item full-width"><label>Schlaf (Stunden)</label><input type="number" id="Schlaf" value="8" step="0.5"></div>
     </div>
 
     <h2>Ernährung</h2>
     <div class="grid">
         <div class="item"><label>B12</label><input type="checkbox" id="B12" checked></div>
         <div class="item"><label>Bakterien</label><input type="checkbox" id="Bakterien" checked></div>
-        <div class="item"><label>Wasser</label><input type="text" id="Wasser" value="2l"></div>
+        <div class="item"><label>Wasser (Liter)</label><input type="number" id="Wasser" value="2" step="0.1"></div>
         <div class="item"><label>Essen</label>
             <select id="Essen">
-                <option value="zu wenig">zu wenig</option>
-                <option value="normal" selected>normal</option>
-                <option value="Gönnung">Gönnung</option>
+                <option value="-1">zu wenig</option>
+                <option value="1" selected>normal</option>
+                <option value="2">Gönnung</option>
             </select>
         </div>
     </div>
 
-    <h2>Beziehung</h2>
+    <h2>Beziehung & Körper</h2>
     <div class="grid">
         <div class="item"><label>Streit</label><input type="checkbox" id="Streit"></div>
         <div class="item"><label>Periode</label><input type="checkbox" id="Periode"></div>
-        <div class="item"><label>Mastubartion</label><input type="checkbox" id="Mastubartion" checked></div>
+        <div class="item"><label>Mastubartion (0/1)</label><input type="number" id="Mastubartion" value="0"></div>
         <div class="item"><label>Sex</label>
             <select id="Sex">
                 <option value="0">kein</option>
@@ -68,7 +99,7 @@
         </div>
     </div>
 
-    <h2>Sonstiges</h2>
+    <h2>Alltag & Laune</h2>
     <div class="grid">
         <div class="item"><label>Sprache lernen</label><input type="checkbox" id="Sprache lernen" checked></div>
         <div class="item"><label>Aktivismus</label><input type="checkbox" id="Aktivismus"></div>
@@ -83,54 +114,61 @@
     </div>
 
     <h2>Studium</h2>
-    <div class="item full-width"><label>Arbeitsaufwand / gelernt</label>
+    <div class="item full-width" style="margin-top:10px;">
+        <label>Studium Pensum</label>
         <select id="Studium">
             <option value="0">zu wenig</option>
-            <option value="1" selected>passend</option>
+            <option value="1" selected>genug</option>
             <option value="2">zu viel</option>
         </select>
     </div>
 
     <button onclick="senden()">DATEN SPEICHERN</button>
-    <p id="status" style="text-align:center; color:#7f8c8d;"></p>
+    <div id="status"></div>
 </div>
 
 <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwZEMrRBAidwyWIRTA6aQ8zaDDujGUGyNyEcJg-3YnpkzRmf2aNBe1Ja3swTyEokaOz/exec"; // HIER URL EINTRAGEN!
+    // URL DEINES GOOGLE APPS SCRIPTS HIER EINTRAGEN:
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwZEMrRBAidwyWIRTA6aQ8zaDDujGUGyNyEcJg-3YnpkzRmf2aNBe1Ja3swTyEokaOz/exec"; 
 
-    // Service Worker registrieren
+    // Service Worker registrieren für PWA Funktionalität
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Fehler:', err));
+        });
     }
 
+    // Beim Start: Datum setzen und PIN prüfen
     window.onload = () => { 
         document.getElementById('datum').valueAsDate = new Date(); 
-        // PIN prüfen oder abfragen
         if (!localStorage.getItem('leben_pin')) {
-            const pin = prompt("Bitte PIN eingeben:");
+            const pin = prompt("Bitte PIN für Leben-Tracker eingeben:");
             if (pin) localStorage.setItem('leben_pin', pin);
         }
     };
 
     async function senden() {
         const status = document.getElementById('status');
+        const overlay = document.getElementById('overlay');
         const userPin = localStorage.getItem('leben_pin');
         
         if (!userPin) {
-            alert("Keine PIN gespeichert!");
+            alert("Keine PIN gefunden. Bitte Seite neu laden.");
             return;
         }
 
         status.innerText = "Speichere...";
         
+        // Liste aller IDs zum Auslesen
         const ids = ["Sport", "Dehnen", "Bewegung", "Erkältung", "Schlaf", "B12", "Bakterien", "Wasser", "Essen", "Streit", "Periode", "Mastubartion", "Sex", "Sprache lernen", "Aktivismus", "soziale Kontakte", "tägliche Laune", "Studium"];
         let values = {};
 
         ids.forEach(id => {
             const el = document.getElementById(id);
-            if (!el) return;
-            if (el.type === "checkbox") values[id] = el.checked ? 1 : 0;
-            else values[id] = el.value;
+            if (el) {
+                if (el.type === "checkbox") values[id] = el.checked ? 1 : 0;
+                else values[id] = el.value;
+            }
         });
 
         const data = {
@@ -140,16 +178,47 @@
         };
 
         try {
-            // WICHTIG: mode: 'no-cors' bleibt wie bei der Finanz-App
             await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-            status.innerText = "✅ Erfolgreich gespeichert!";
-            setTimeout(() => { status.innerText = ""; }, 3000);
+            
+            // Erfolg: Overlay zeigen
+            overlay.style.display = 'flex';
+            
+            // Reset der Form nach kurzer Pause
+            setTimeout(() => { 
+                overlay.style.display = 'none'; 
+                status.innerText = "";
+                resetForm();
+            }, 1500);
+
         } catch(e) {
-            alert("Fehler bei der Verbindung!");
-            status.innerText = "";
+            alert("Fehler beim Senden!");
+            status.innerText = "Fehler!";
         }
     }
-</script>
+
+    function resetForm() {
+        // Datum auf heute zurücksetzen
+        document.getElementById('datum').valueAsDate = new Date();
+
+        // Checkboxen
+        ["Sport", "Dehnen", "Bewegung", "Erkältung", "Streit", "Periode", "Aktivismus", "soziale Kontakte"].forEach(id => {
+            document.getElementById(id).checked = false;
+        });
+        ["B12", "Bakterien", "Sprache lernen"].forEach(id => {
+            document.getElementById(id).checked = true;
+        });
+        
+        // Zahlenfelder
+        document.getElementById('Schlaf').value = "8";
+        document.getElementById('Wasser').value = "2";
+        document.getElementById('Mastubartion').value = "0";
+        
+        // Dropdowns
+        document.getElementById('Essen').value = "1";
+        document.getElementById('Sex').value = "0";
+        document.getElementById('tägliche Laune').value = "5";
+        document.getElementById('Studium').value = "1";
+    }
 </script>
 </body>
 </html>
