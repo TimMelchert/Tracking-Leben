@@ -1,1 +1,127 @@
-<h1>Coming Soon</h1>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Leben</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root { --primary: #34495e; --success: #27ae60; --bg: #f4f7f6; }
+        body { font-family: sans-serif; background: var(--bg); padding: 15px; margin: 0; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); max-width: 500px; margin: auto; }
+        h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; font-size: 1.2em; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .item { display: flex; flex-direction: column; background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
+        label { font-size: 0.75em; font-weight: bold; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
+        input[type="text"], input[type="date"], select { padding: 8px; border-radius: 5px; border: 1px solid #ddd; }
+        input[type="checkbox"] { width: 25px; height: 25px; accent-color: var(--success); }
+        .full-width { grid-column: span 2; }
+        button { width: 100%; padding: 15px; background: var(--success); color: white; border: none; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Tracking Leben</h1>
+    <input type="date" id="datum" class="full-width" style="margin-bottom: 20px;">
+
+    <h2>Gesundheit</h2>
+    <div class="grid">
+        <div class="item"><label>Sport</label><input type="checkbox" id="Sport"></div>
+        <div class="item"><label>Dehnen</label><input type="checkbox" id="Dehnen"></div>
+        <div class="item"><label>Bewegung</label><input type="checkbox" id="Bewegung"></div>
+        <div class="item"><label>Erkältung</label><input type="checkbox" id="Erkältung"></div>
+        <div class="item full-width"><label>Schlaf</label><input type="text" id="Schlaf" value="8h"></div>
+    </div>
+
+    <h2>Ernährung</h2>
+    <div class="grid">
+        <div class="item"><label>B12</label><input type="checkbox" id="B12" checked></div>
+        <div class="item"><label>Bakterien</label><input type="checkbox" id="Bakterien" checked></div>
+        <div class="item"><label>Wasser</label><input type="text" id="Wasser" value="2l"></div>
+        <div class="item"><label>Essen</label>
+            <select id="Essen">
+                <option value="zu wenig">zu wenig</option>
+                <option value="normal" selected>normal</option>
+                <option value="Gönnung">Gönnung</option>
+            </select>
+        </div>
+    </div>
+
+    <h2>Beziehung & Körper</h2>
+    <div class="grid">
+        <div class="item"><label>Streit</label><input type="checkbox" id="Streit"></div>
+        <div class="item"><label>Periode</label><input type="checkbox" id="Periode"></div>
+        <div class="item"><label>Mastubartion</label><input type="checkbox" id="Mastubartion" checked></div>
+        <div class="item"><label>Sex</label>
+            <select id="Sex">
+                <option value="0">kein</option>
+                <option value="1">Vorspiel</option>
+                <option value="2">ganz</option>
+            </select>
+        </div>
+    </div>
+
+    <h2>Sonstiges</h2>
+    <div class="grid">
+        <div class="item"><label>Sprache lernen</label><input type="checkbox" id="Sprache lernen" checked></div>
+        <div class="item"><label>Aktivismus</label><input type="checkbox" id="Aktivismus"></div>
+        <div class="item"><label>soziale Kontakte</label><input type="checkbox" id="soziale Kontakte"></div>
+        <div class="item"><label>tägliche Laune</label>
+            <select id="tägliche Laune">
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                <option value="4">4</option><option value="5" selected>5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+            </select>
+        </div>
+    </div>
+
+    <h2>Studium</h2>
+    <div class="item full-width"><label>Fortschritt</label>
+        <select id="Studium">
+            <option value="0">zu wenig</option>
+            <option value="1" selected>genug</option>
+            <option value="2">zu viel</option>
+        </select>
+    </div>
+
+    <button onclick="senden()">DATEN SPEICHERN</button>
+    <p id="status" style="text-align:center; color:#7f8c8d;"></p>
+</div>
+
+<script>
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwZEMrRBAidwyWIRTA6aQ8zaDDujGUGyNyEcJg-3YnpkzRmf2aNBe1Ja3swTyEokaOz/exec"; // HIER URL EINTRAGEN!
+
+    window.onload = () => { document.getElementById('datum').valueAsDate = new Date(); };
+
+    async function senden() {
+        const status = document.getElementById('status');
+        status.innerText = "Speichere...";
+        
+        const ids = ["Sport", "Dehnen", "Bewegung", "Erkältung", "Schlaf", "B12", "Bakterien", "Wasser", "Essen", "Streit", "Periode", "Mastubartion", "Sex", "Sprache lernen", "Aktivismus", "soziale Kontakte", "tägliche Laune", "Studium"];
+        let values = {};
+
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (el.type === "checkbox") values[id] = el.checked ? 1 : 0;
+            else values[id] = el.value;
+        });
+
+        const data = {
+            pin: localStorage.getItem('finanz_pin'), // Nutzt die PIN aus der anderen App [cite: 142]
+            datum: document.getElementById('datum').value,
+            values: values
+        };
+
+        try {
+            await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            status.innerText = "Erfolgreich gespeichert!";
+            setTimeout(() => { status.innerText = ""; }, 2000);
+        } catch(e) {
+            alert("Fehler!");
+            status.innerText = "";
+        }
+    }
+</script>
+</body>
+</html>
