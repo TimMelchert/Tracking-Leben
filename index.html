@@ -131,10 +131,15 @@
     // URL DEINES GOOGLE APPS SCRIPTS HIER EINTRAGEN:
     const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwZEMrRBAidwyWIRTA6aQ8zaDDujGUGyNyEcJg-3YnpkzRmf2aNBe1Ja3swTyEokaOz/exec"; 
 
-    // Service Worker registrieren für PWA Funktionalität
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Fehler:', err));
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+            .then(reg => {
+                // Prüft bei jedem Laden, ob eine neue Version auf GitHub liegt
+                reg.update(); 
+                console.log('Service Worker registriert');
+            })
+            .catch(err => console.log('SW Fehler:', err));
         });
     }
 
