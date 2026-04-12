@@ -20,7 +20,11 @@
         h1 { text-align: center; color: var(--primary); margin-bottom: 20px; font-size: 1.5em; }
         h2 { color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 25px; font-size: 1.1em; text-transform: uppercase; }
         
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid { 
+        display: grid; 
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); 
+        gap: 12px; 
+        }
         .item { display: flex; flex-direction: column; background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
         .full-width { grid-column: span 2; }
         
@@ -85,7 +89,7 @@
         </div>
     </div>
 
-    <h2>Beziehung & Körper</h2>
+    <h2>Beziehung</h2>
     <div class="grid">
         <div class="item"><label>Streit</label><input type="checkbox" id="Streit"></div>
         <div class="item"><label>Periode</label><input type="checkbox" id="Periode"></div>
@@ -99,7 +103,7 @@
         </div>
     </div>
 
-    <h2>Alltag & Laune</h2>
+    <h2>Alltag</h2>
     <div class="grid">
         <div class="item"><label>Sprache lernen</label><input type="checkbox" id="Sprache lernen" checked></div>
         <div class="item"><label>Aktivismus</label><input type="checkbox" id="Aktivismus"></div>
